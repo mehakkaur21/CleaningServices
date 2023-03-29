@@ -73,11 +73,15 @@ input {
     padding: 8px;
     background-color: white;
     margin-bottom: 14px;
-    color: gray;
+    color: var(--lblue);
     border: none;
     border: 1px solid rgb(100, 100, 100);
     border-radius: 3px;
     margin-top: 6px;
+}
+textarea{
+    color: var(--lblue);
+
 }
 
  label {
@@ -168,4 +172,20 @@ input {
 .userPassword p:hover {
     filter: blur(0px);
     -webkit-filter: blur(0px);
+}
+
+.errorFlash p, .successFlash p {
+    all: unset !important;
+}
+
+.errorFlash, .successFlash {
+    background-color: rgb(255, 89, 89) !important;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.successFlash {
+    background-color: teal !important;
 }

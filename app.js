@@ -12,6 +12,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 const bodyParse = require('body-parser');
 app.use(bodyParse.urlencoded({ extended: false }));
 
+// npm install --save connect-flash
+var flash = require('connect-flash');
+
 // Importing Mongoose
 const mongoose = require('mongoose');
 const MONGODB_URI = "mongodb+srv://mehak:mehak@cluster0.lglyjss.mongodb.net/CleaningService"
@@ -39,16 +42,23 @@ app.use(
 // Serving login status to all pages
 app.use((req, res, next) => {
   res.locals.isLoggedIn = req.session.isLoggedIn;
+  res.locals.user = req.session.user;
+  console.log(req.session.user);
   next();
 })
+
+// USING FLASH FUNCTION TO SEND RESPONSES TO USER
+app.use(flash());
 
 
 const homeRoutes = require('./routes/home');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
+const bookingRoutes = require('./routes/booking');
 app.use(homeRoutes.router);
 app.use(authRoutes.router);
 app.use(dashboardRoutes.router);
+app.use(bookingRoutes.router);
 
 
 // ADDING ERROR 404 PAGE
