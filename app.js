@@ -1,7 +1,7 @@
 // Importing Express
 const express = require("express");
 const app = express();
-
+const User =require('./model/users')
 // Importing Path
 const path = require('path');
 
@@ -55,10 +55,12 @@ const homeRoutes = require('./routes/home');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const bookingRoutes = require('./routes/booking');
+const adminRoutes = require('./routes/admin');
 app.use(homeRoutes.router);
 app.use(authRoutes.router);
 app.use(dashboardRoutes.router);
 app.use(bookingRoutes.router);
+app.use(adminRoutes.router);
 
 
 // ADDING ERROR 404 PAGE
@@ -70,13 +72,45 @@ app.set('view engine', 'ejs');
 app.set('views', 'views')
 
 
-
+const bcryptjs = require('bcryptjs');
 mongoose.connect(MONGODB_URI)
   .then(result => {
-    console.log('Connected To SurveyIt Database Successfully')
-    const port = process.env.PORT || 2100;
+    console.log('Connected To One Step Away Cleaner Database Successfully')
+    User.findOne()
+    .then(user=>{
+      if(!user){
+        const date = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const dateNow = date.toLocaleDateString('en-US', options);
+        const options2 = { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/Toronto' };
+        const time = new Date().toLocaleTimeString('en-US', options2);
+        console.log('No User Exists Till Now, Thereofore creating our first user');
+        let password = 'admin123'
+        bcryptjs.hash(password, 12)
+        .then(hashedPassword=>{
+          const user = new User({
+            firstName: "Admin",
+            lastName: "Account",
+            email:"admin@osac.com",
+            password: hashedPassword,
+            userType: 'admin',
+            dateCreated: dateNow,
+            timeCreated: time,
+            notifications:[{
+              notification: `Welcome to One Step Away Cleaner Admin !`,
+              notificationTime: time,
+              notificationDate: dateNow,
+              notificationClass: "notification"
+          }]
+        })
+        user.save();
+        })
+      }
+    })
+
+    const port = process.env.PORT || 3000;
     // Starting the server
     app.listen(port, () => {
-      console.log('Listening on port 2100');
+      console.log('Listening on port 3000');
     })
   });
